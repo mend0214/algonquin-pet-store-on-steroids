@@ -5,7 +5,7 @@ metadata:
   name: mongodb
 spec:
   serviceName: mongodb # Associated headless service for DNS resolution
-  replicas: 3 # Number of MongoDB replicas
+  replicas: 1 # Number of MongoDB replicas
   selector:
     matchLabels:
       app: mongodb # Labels to match for this StatefulSet
@@ -37,17 +37,6 @@ spec:
                 - db.runCommand('ping').ok
             initialDelaySeconds: 5 # Wait time before starting probe
             periodSeconds: 5 # Interval between probes
-          volumeMounts:
-            - name: mongodb-data
-              mountPath: /data/db
-  volumeClaimTemplates:
-    - metadata:
-        name: mongodb-data
-      spec:
-        accessModes: ["ReadWriteOnce"]
-        resources:
-          requests:
-            storage: 100m
 ---
 # Service to expose MongoDB
 apiVersion: v1
@@ -55,7 +44,6 @@ kind: Service
 metadata:
   name: mongodb
 spec:
-  clusterIP: None #Headless
   ports:
     - port: 27017 # MongoDB service port
   selector:
@@ -104,9 +92,6 @@ spec:
             - name: rabbitmq-enabled-plugins
               mountPath: /etc/rabbitmq/enabled_plugins
               subPath: enabled_plugins
-            # NEW: Persistent volume for RabbitMQ data
-            - name: rabbitmq-data
-              mountPath: /var/lib/rabbitmq
       volumes:
         - name: rabbitmq-enabled-plugins
           configMap:
@@ -114,14 +99,6 @@ spec:
             items:
               - key: rabbitmq_enabled_plugins
                 path: enabled_plugins
-  volumeClaimTemplates:
-    - metadata:
-        name: rabbitmq-data
-      spec:
-        accessModes: ["ReadWriteOnce"]
-        resources:
-          requests:
-            storage: 100m
 ---
 # Service for RabbitMQ
 apiVersion: v1

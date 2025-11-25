@@ -47,7 +47,7 @@ spec:
         accessModes: ["ReadWriteOnce"]
         resources:
           requests:
-            storage: 100m
+            storage: 5Gi
 ---
 # Service to expose MongoDB
 apiVersion: v1
@@ -121,7 +121,7 @@ spec:
         accessModes: ["ReadWriteOnce"]
         resources:
           requests:
-            storage: 100m
+            storage: 5Gi
 ---
 # Service for RabbitMQ
 apiVersion: v1
